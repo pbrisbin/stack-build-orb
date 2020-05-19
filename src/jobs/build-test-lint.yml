@@ -28,7 +28,12 @@ parameters:
     type: integer
     default: 1
 
-executor: ubuntu
+  executor:
+    description: "Executor to use for this job"
+    type: executor
+    default: ubuntu
+
+executor: <<parameters.executor>>
 
 steps:
   - checkout
