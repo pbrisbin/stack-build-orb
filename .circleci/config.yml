@@ -1,0 +1,15 @@
+version: 2.1
+
+orbs:
+  orb-tools: circleci/orb-tools@2.0.0
+
+workflows:
+  btd:
+    jobs:
+      - orb-tools/lint
+      - orb-tools/pack
+      - orb-tools/publish-dev:
+          orb-ref: pbrisbin/stack-build@dev:${CIRCLE_BRANCH}
+          publish-token-variable: "$CIRCLECI_DEV_API_TOKEN"
+          requires: [orb-tools/pack, orb-tools/lint]
+          validate: true
