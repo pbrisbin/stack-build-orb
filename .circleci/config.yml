@@ -10,6 +10,6 @@ workflows:
       - orb-tools/pack
       - orb-tools/publish-dev:
           orb-ref: pbrisbin/stack-build@dev:${CIRCLE_BRANCH}
-          publish-token-variable: "$CIRCLECI_API_TOKEN"
+          publish-token-variable: CIRCLECI_API_TOKEN
           requires: [orb-tools/pack, orb-tools/lint]
           validate: true
