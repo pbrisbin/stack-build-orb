@@ -1,0 +1,77 @@
+description: |
+  Build, test, and lint the project
+
+# TODO: how to dry with other commands?
+parameters:
+  stack-yaml:
+    description: "Path to stack.yaml file to use"
+    type: string
+    default: stack.yaml
+  stack-arguments:
+    description: "Additional arguments for ALL Stack invocations"
+    type: string
+    default: ""
+  heavy-dependencies:
+    description: "Dependencies to build first, with -j 1"
+    type: string
+    default: ""
+  hlint:
+    description: "Run HLint?"
+    type: boolean
+    default: true
+  weeder:
+    description: "Run Weeder?"
+    type: boolean
+    default: true
+  cache-epoch:
+    description: "Prefix used for all cache keys"
+    type: integer
+    default: 1
+
+steps:
+  - restore_cache:
+      keys:
+        - v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
+        - v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+        - v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-
+  - run:
+      name: Build
+      command: stack build
+        --stack-yaml "<<parameters.stack-yaml>>"
+        --no-terminal
+        <<parameters.stack-arguments>>
+        --pedantic
+        --test
+        --no-run-tests
+  - save_cache:
+      key: v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
+      paths:
+        - ./.stack-work
+  - run:
+      name: Test
+      command: stack build
+        --stack-yaml "<<parameters.stack-yaml>>"
+        --no-terminal
+        <<parameters.stack-arguments>>
+        --pedantic
+        --test
+  - when:
+      condition: <<parameters.hlint>>
+      steps:
+        - run:
+            name: HLint
+            command: stack exec
+              --stack-yaml "<<parameters.stack-yaml>>"
+              --no-terminal
+              hlint .
+  - when:
+      condition: <<parameters.weeder>>
+      steps:
+        - run:
+            name: Weeder
+            command: stack exec
+              --stack-yaml "<<parameters.stack-yaml>>"
+              --no-terminal
+              weeder .
+            environment:
+              STACK_YAML: <<parameters.stack-yaml>>

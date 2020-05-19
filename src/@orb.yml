@@ -1,0 +1,7 @@
+version: 2.1
+
+description: |
+  Build, test, and lint a Stack-based Haskell project
+
+display:
+  source_url: https://github.com/pbrisbin/stack-build-orb

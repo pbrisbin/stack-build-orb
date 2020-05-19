@@ -1,0 +1,95 @@
+description: |
+  Install tooling and build project dependencies
+
+# TODO: how to dry with other commands?
+parameters:
+  stack-yaml:
+    description: "Path to stack.yaml file to use"
+    type: string
+    default: stack.yaml
+  stack-arguments:
+    description: "Additional arguments for ALL Stack invocations"
+    type: string
+    default: ""
+  heavy-dependencies:
+    description: "Dependencies to build first, with -j 1"
+    type: string
+    default: ""
+  hlint:
+    description: "Run HLint?"
+    type: boolean
+    default: true
+  weeder:
+    description: "Run Weeder?"
+    type: boolean
+    default: true
+  cache-epoch:
+    description: "Prefix used for all cache keys"
+    type: integer
+    default: 1
+
+steps:
+  - run:
+      name: Install Stack
+      command: curl -sSL https://get.haskellstack.org/ | sh
+  - run:
+      name: Digest
+      command: |
+        # TODO: once committing the cabal file catches on, we can just
+        # assume it exists and md5sum *.cabal here.
+        find . -maxdepth 1 -type f \
+          -name package.yaml -name '*.cabal' \
+          -exec md5sum {} + > project.digest
+
+        git ls-files | xargs md5sum > source.digest
+  - restore_cache:
+      keys:
+        - v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+        - v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-
+  - when:
+      condition: <<parameters.heavy-dependencies>>
+      steps:
+        - run:
+            # Build single-threaded first, to avoid out of memory
+            name: Build heavy dependencies
+            command: stack build -j 1
+              --stack-yaml "<<parameters.stack-yaml>>"
+              --no-terminal
+              <<parameters.stack-arguments>>
+              <<parameters.heavy-dependencies>>
+  - run:
+      name: Build dependencies
+      command: stack build
+        --stack-yaml "<<parameters.stack-yaml>>"
+        --no-terminal
+        <<parameters.stack-arguments>>
+        --dependencies-only
+        --bench
+        --no-run-benchmarks
+        --test
+        --no-run-tests
+  - when:
+      condition: <<parameters.hlint>>
+      steps:
+        - run:
+            name: Install HLint
+            command: stack install
+              --stack-yaml "<<parameters.stack-yaml>>"
+              --no-terminal
+              <<parameters.stack-arguments>>
+              --copy-compiler-tool hlint weeder
+  - when:
+      condition: <<parameters.weeder>>
+      steps:
+        - run:
+            name: Install Weeder
+            command: stack install
+              --stack-yaml "<<parameters.stack-yaml>>"
+              --no-terminal
+              <<parameters.stack-arguments>>
+              --copy-compiler-tool weeder
+  - save_cache:
+      key: v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+      paths:
+        - ~/.stack
+        - ./.stack-work
