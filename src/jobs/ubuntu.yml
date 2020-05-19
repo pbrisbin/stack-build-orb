@@ -28,18 +28,18 @@ parameters:
     type: integer
     default: 1
 
-executor: stack-build/ubuntu
+executor: ubuntu
 
 steps:
   - checkout
-  - stack-build/setup:
+  - setup:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: <<parameters.stack-arguments>>
       heavy-dependencies: <<parameters.heavy-dependencies>>
       hlint: <<parameters.hlint>>
       weeder: <<parameters.weeder>>
       cache-epoch: <<parameters.cache-epoch>>
-  - stack-build/build:
+  - build:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: <<parameters.stack-arguments>>
       heavy-dependencies: <<parameters.heavy-dependencies>>
