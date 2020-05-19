@@ -1,0 +1,48 @@
+description: |
+  Build, test, and lint on the ubuntu Machine executor
+
+# TODO: how to dry with commands? is there easier pass-through definition?
+parameters:
+  stack-yaml:
+    description: "Path to stack.yaml file to use"
+    type: string
+    default: stack.yaml
+  stack-arguments:
+    description: "Additional arguments for ALL Stack invocations"
+    type: string
+    default: ""
+  heavy-dependencies:
+    description: "Dependencies to build first, with -j 1"
+    type: string
+    default: ""
+  hlint:
+    description: "Run HLint?"
+    type: boolean
+    default: true
+  weeder:
+    description: "Run Weeder?"
+    type: boolean
+    default: true
+  cache-epoch:
+    description: "Prefix used for all cache keys"
+    type: integer
+    default: 1
+
+executor: stack-build/ubuntu
+
+steps:
+  - checkout
+  - stack-build/setup:
+      stack-yaml: <<parameters.stack-yaml>>
+      stack-arguments: <<parameters.stack-arguments>>
+      heavy-dependencies: <<parameters.heavy-dependencies>>
+      hlint: <<parameters.hlint>>
+      weeder: <<parameters.weeder>>
+      cache-epoch: <<parameters.cache-epoch>>
+  - stack-build/build:
+      stack-yaml: <<parameters.stack-yaml>>
+      stack-arguments: <<parameters.stack-arguments>>
+      heavy-dependencies: <<parameters.heavy-dependencies>>
+      hlint: <<parameters.hlint>>
+      weeder: <<parameters.weeder>>
+      cache-epoch: <<parameters.cache-epoch>>
