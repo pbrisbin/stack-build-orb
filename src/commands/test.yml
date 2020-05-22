@@ -10,8 +10,17 @@ parameters:
     description: "Additional Stack arguments"
     type: string
     default: ""
+  before-test:
+    description: "Steps to run before tests"
+    type: steps
+    default: []
+  after-test:
+    description: "Steps to run after tests"
+    type: steps
+    default: []
 
 steps:
+  - steps: <<parameters.before-test>>
   - run:
       name: Test
       command: stack build
@@ -20,3 +29,4 @@ steps:
         <<parameters.stack-arguments>>
         --pedantic
         --test
+  - steps: <<parameters.after-test>>

@@ -18,6 +18,14 @@ parameters:
     description: "Steps to run after installing dependencies"
     type: steps
     default: []
+  before-test:
+    description: "Steps to run before tests"
+    type: steps
+    default: []
+  after-test:
+    description: "Steps to run after tests"
+    type: steps
+    default: []
   cache-epoch:
     description: "Prefix used for all cache keys"
     type: integer
@@ -47,3 +55,5 @@ steps:
   - test:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: --resolver nightly <<parameters.stack-arguments>>
+      before-test: <<parameters.before-test>>
+      after-test: <<parameters.after-test>>
