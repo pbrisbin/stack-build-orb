@@ -1,5 +1,5 @@
 description: |
-  Easily build and test Stack-based Haskell projects
+  Build, test, and lint across multiple resolvers
 
 usage:
   version: 2.1
