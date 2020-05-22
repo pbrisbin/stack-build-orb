@@ -10,10 +10,14 @@ parameters:
     description: "Additional Stack arguments"
     type: string
     default: ""
-  heavy-dependencies:
-    description: "Dependencies to build first, with -j 1"
-    type: string
-    default: ""
+  before-dependencies:
+    description: "Steps to run before installing dependencies"
+    type: steps
+    default: []
+  after-dependencies:
+    description: "Steps to run after installing dependencies"
+    type: steps
+    default: []
   hlint:
     description: "Install HLint?"
     type: boolean
@@ -45,17 +49,7 @@ steps:
       keys:
         - v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
         - v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-
-  - when:
-      condition: <<parameters.heavy-dependencies>>
-      steps:
-        - run:
-            # Build single-threaded first, to avoid out of memory
-            name: Build heavy dependencies
-            command: stack build -j 1
-              --stack-yaml "<<parameters.stack-yaml>>"
-              --no-terminal
-              <<parameters.stack-arguments>>
-              <<parameters.heavy-dependencies>>
+  - steps: <<parameters.before-dependencies>>
   - run:
       name: Build dependencies
       command: stack build
@@ -67,6 +61,7 @@ steps:
         --no-run-benchmarks
         --test
         --no-run-tests
+  - steps: <<parameters.after-dependencies>>
   - when:
       condition: <<parameters.hlint>>
       steps:

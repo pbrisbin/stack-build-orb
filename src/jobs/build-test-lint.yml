@@ -10,10 +10,14 @@ parameters:
     description: "Additional arguments for ALL Stack invocations"
     type: string
     default: ""
-  heavy-dependencies:
-    description: "Dependencies to build first, with -j 1"
-    type: string
-    default: ""
+  before-dependencies:
+    description: "Steps to run before installing dependencies"
+    type: steps
+    default: []
+  after-dependencies:
+    description: "Steps to run after installing dependencies"
+    type: steps
+    default: []
   hlint:
     description: "Run HLint?"
     type: boolean
@@ -43,7 +47,8 @@ steps:
   - setup:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: <<parameters.stack-arguments>>
-      heavy-dependencies: <<parameters.heavy-dependencies>>
+      before-dependencies: <<parameters.before-dependencies>>
+      after-dependencies: <<parameters.after-dependencies>>
       hlint: <<parameters.hlint>>
       weeder: <<parameters.weeder>>
       cache-epoch: <<parameters.cache-epoch>>
