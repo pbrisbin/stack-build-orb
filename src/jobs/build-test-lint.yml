@@ -18,6 +18,14 @@ parameters:
     description: "Steps to run after installing dependencies"
     type: steps
     default: []
+  before-test:
+    description: "Steps to run before tests"
+    type: steps
+    default: []
+  after-test:
+    description: "Steps to run after tests"
+    type: steps
+    default: []
   hlint:
     description: "Run HLint?"
     type: boolean
@@ -59,6 +67,8 @@ steps:
   - test:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: <<parameters.stack-arguments>>
+      before-test: <<parameters.before-test>>
+      after-test: <<parameters.after-test>>
   - when:
       condition: <<parameters.hlint>>
       steps:
