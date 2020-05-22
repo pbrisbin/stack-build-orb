@@ -19,7 +19,7 @@ steps:
           curl -L -o .hlint.yaml "<<parameters.hlint-yaml-url>>"
         fi
 
-        stack exec
+        stack exec \
           --stack-yaml "<<parameters.stack-yaml>>" \
           --no-terminal \
           hlint .
