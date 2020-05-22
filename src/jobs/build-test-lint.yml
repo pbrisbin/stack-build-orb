@@ -74,6 +74,7 @@ steps:
       steps:
         - lint-hlint:
             stack-yaml: <<parameters.stack-yaml>>
+            hlint-yaml-url: <<parameters.hlint-yaml-url>>
   - when:
       condition: <<parameters.weeder>>
       steps:
