@@ -1,14 +1,13 @@
 description: |
   Install tooling and build project dependencies
 
-# TODO: how to dry with other commands?
 parameters:
   stack-yaml:
     description: "Path to stack.yaml file to use"
     type: string
     default: stack.yaml
   stack-arguments:
-    description: "Additional arguments for ALL Stack invocations"
+    description: "Additional Stack arguments"
     type: string
     default: ""
   heavy-dependencies:
@@ -16,15 +15,15 @@ parameters:
     type: string
     default: ""
   hlint:
-    description: "Run HLint?"
+    description: "Install HLint?"
     type: boolean
     default: true
   weeder:
-    description: "Run Weeder?"
+    description: "Install Weeder?"
     type: boolean
     default: true
   cache-epoch:
-    description: "Prefix used for all cache keys"
+    description: "Prefix used for cache key"
     type: integer
     default: 1
 

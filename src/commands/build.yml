@@ -1,7 +1,6 @@
 description: |
-  Build, test, and lint the project
+  Build the project
 
-# TODO: how to dry with other commands?
 parameters:
   stack-yaml:
     description: "Path to stack.yaml file to use"
@@ -15,16 +14,12 @@ parameters:
     description: "Dependencies to build first, with -j 1"
     type: string
     default: ""
-  hlint:
-    description: "Run HLint?"
-    type: boolean
-    default: true
   weeder:
     description: "Run Weeder?"
     type: boolean
     default: true
   cache-epoch:
-    description: "Prefix used for all cache keys"
+    description: "Prefix used for cache key"
     type: integer
     default: 1
 
@@ -47,31 +42,3 @@ steps:
       key: v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
       paths:
         - ./.stack-work
-  - run:
-      name: Test
-      command: stack build
-        --stack-yaml "<<parameters.stack-yaml>>"
-        --no-terminal
-        <<parameters.stack-arguments>>
-        --pedantic
-        --test
-  - when:
-      condition: <<parameters.hlint>>
-      steps:
-        - run:
-            name: HLint
-            command: stack exec
-              --stack-yaml "<<parameters.stack-yaml>>"
-              --no-terminal
-              hlint .
-  - when:
-      condition: <<parameters.weeder>>
-      steps:
-        - run:
-            name: Weeder
-            command: stack exec
-              --stack-yaml "<<parameters.stack-yaml>>"
-              --no-terminal
-              weeder .
-            environment:
-              STACK_YAML: <<parameters.stack-yaml>>

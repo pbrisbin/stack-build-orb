@@ -1,0 +1,22 @@
+description: |
+  Test the project
+
+parameters:
+  stack-yaml:
+    description: "Path to stack.yaml file to use"
+    type: string
+    default: stack.yaml
+  stack-arguments:
+    description: "Additional Stack arguments"
+    type: string
+    default: ""
+
+steps:
+  - run:
+      name: Test
+      command: stack build
+        --stack-yaml "<<parameters.stack-yaml>>"
+        --no-terminal
+        <<parameters.stack-arguments>>
+        --pedantic
+        --test

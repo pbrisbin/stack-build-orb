@@ -3,10 +3,11 @@ version: 2.1
 orbs:
   orb-tools: circleci/orb-tools@9.0
 
-parameters:
-  dev-orb-version:
-    type: string
-    default: "dev:alpha"
+# Does this do anything?
+# parameters:
+#   dev-orb-version:
+#     type: string
+#     default: "dev:alpha"
 
 workflows:
   btd:
