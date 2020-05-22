@@ -1,5 +1,5 @@
 description: |
-  Build, test, and lint
+  Build and test, with --resolver nightly
 
 parameters:
   stack-yaml:
@@ -18,18 +18,6 @@ parameters:
     description: "Steps to run after installing dependencies"
     type: steps
     default: []
-  hlint:
-    description: "Run HLint?"
-    type: boolean
-    default: true
-  hlint-yaml-url:
-    description: "URL to hlint.yaml to download"
-    type: string
-    default: ""
-  weeder:
-    description: "Run Weeder?"
-    type: boolean
-    default: true
   cache-epoch:
     description: "Prefix used for all cache keys"
     type: integer
@@ -46,26 +34,16 @@ steps:
   - checkout
   - setup:
       stack-yaml: <<parameters.stack-yaml>>
-      stack-arguments: <<parameters.stack-arguments>>
+      stack-arguments: --resolver nightly <<parameters.stack-arguments>>
       before-dependencies: <<parameters.before-dependencies>>
       after-dependencies: <<parameters.after-dependencies>>
-      hlint: <<parameters.hlint>>
-      weeder: <<parameters.weeder>>
+      hlint: false
+      weeder: false
       cache-epoch: <<parameters.cache-epoch>>
   - build:
       stack-yaml: <<parameters.stack-yaml>>
-      stack-arguments: <<parameters.stack-arguments>>
+      stack-arguments: --resolver nightly <<parameters.stack-arguments>>
       cache-epoch: <<parameters.cache-epoch>>
   - test:
       stack-yaml: <<parameters.stack-yaml>>
-      stack-arguments: <<parameters.stack-arguments>>
-  - when:
-      condition: <<parameters.hlint>>
-      steps:
-        - lint-hlint:
-            stack-yaml: <<parameters.stack-yaml>>
-  - when:
-      condition: <<parameters.weeder>>
-      steps:
-        - lint-weeder:
-            stack-yaml: <<parameters.stack-yaml>>
+      stack-arguments: --resolver nightly <<parameters.stack-arguments>>
