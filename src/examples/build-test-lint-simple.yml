@@ -1,0 +1,19 @@
+description: |
+  Build, test, and lint a single-resolver project
+
+usage:
+  version: 2.1
+
+  orbs:
+    stack-build: pbrisbin/stack-build@x.y
+
+  jobs:
+    build:
+      executor: stack-build/ubuntu
+      steps:
+        - checkout
+        - stack-build/setup
+        - stack-build/build
+        - stack-build/test
+        - stack-build/lint-hlint
+        - stack-build/lint-weeder

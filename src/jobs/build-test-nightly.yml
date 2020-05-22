@@ -1,5 +1,5 @@
 description: |
-  Build, test, and lint
+  Build and test, with --resolver nightly
 
 parameters:
   stack-yaml:
@@ -26,22 +26,10 @@ parameters:
     description: "Steps to run after tests"
     type: steps
     default: []
-  hlint:
-    description: "Run HLint?"
-    type: boolean
-    default: true
-  hlint-yaml-url:
-    description: "URL to hlint.yaml to download"
-    type: string
-    default: ""
-  weeder:
-    description: "Run Weeder?"
-    type: boolean
-    default: true
   cache-prefix:
     description: "Prefix used for all cache keys"
     type: string
-    default: v1
+    default: v1-nightly
 
   executor:
     description: "Executor to use for this job"
@@ -54,29 +42,18 @@ steps:
   - checkout
   - setup:
       stack-yaml: <<parameters.stack-yaml>>
-      stack-arguments: <<parameters.stack-arguments>>
+      stack-arguments: --resolver nightly <<parameters.stack-arguments>>
       before-dependencies: <<parameters.before-dependencies>>
       after-dependencies: <<parameters.after-dependencies>>
-      hlint: <<parameters.hlint>>
-      weeder: <<parameters.weeder>>
+      hlint: false
+      weeder: false
       cache-prefix: <<parameters.cache-prefix>>-dependencies
   - build:
       stack-yaml: <<parameters.stack-yaml>>
-      stack-arguments: <<parameters.stack-arguments>>
+      stack-arguments: --resolver nightly <<parameters.stack-arguments>>
       cache-prefix: <<parameters.cache-prefix>>
   - test:
       stack-yaml: <<parameters.stack-yaml>>
-      stack-arguments: <<parameters.stack-arguments>>
+      stack-arguments: --resolver nightly <<parameters.stack-arguments>>
       before-test: <<parameters.before-test>>
       after-test: <<parameters.after-test>>
-  - when:
-      condition: <<parameters.hlint>>
-      steps:
-        - lint-hlint:
-            stack-yaml: <<parameters.stack-yaml>>
-            hlint-yaml-url: <<parameters.hlint-yaml-url>>
-  - when:
-      condition: <<parameters.weeder>>
-      steps:
-        - lint-weeder:
-            stack-yaml: <<parameters.stack-yaml>>

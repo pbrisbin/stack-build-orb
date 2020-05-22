@@ -32,6 +32,8 @@ workflows:
           weeder: false
 ```
 
+See [all examples](./src/examples/).
+
 ---
 
 [LICENSE](./LICENSE) | [CHANGELOG](./CHANGELOG.md)

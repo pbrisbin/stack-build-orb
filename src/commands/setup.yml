@@ -1,32 +1,35 @@
 description: |
   Install tooling and build project dependencies
 
-# TODO: how to dry with other commands?
 parameters:
   stack-yaml:
     description: "Path to stack.yaml file to use"
     type: string
     default: stack.yaml
   stack-arguments:
-    description: "Additional arguments for ALL Stack invocations"
+    description: "Additional Stack arguments"
     type: string
     default: ""
-  heavy-dependencies:
-    description: "Dependencies to build first, with -j 1"
-    type: string
-    default: ""
+  before-dependencies:
+    description: "Steps to run before installing dependencies"
+    type: steps
+    default: []
+  after-dependencies:
+    description: "Steps to run after installing dependencies"
+    type: steps
+    default: []
   hlint:
-    description: "Run HLint?"
+    description: "Install HLint?"
     type: boolean
     default: true
   weeder:
-    description: "Run Weeder?"
+    description: "Install Weeder?"
     type: boolean
     default: true
-  cache-epoch:
-    description: "Prefix used for all cache keys"
-    type: integer
-    default: 1
+  cache-prefix:
+    description: "Prefix used for cache key"
+    type: string
+    default: v1-dependencies
 
 steps:
   - run:
@@ -44,19 +47,9 @@ steps:
         git ls-files | xargs md5sum > source.digest
   - restore_cache:
       keys:
-        - v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
-        - v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-
-  - when:
-      condition: <<parameters.heavy-dependencies>>
-      steps:
-        - run:
-            # Build single-threaded first, to avoid out of memory
-            name: Build heavy dependencies
-            command: stack build -j 1
-              --stack-yaml "<<parameters.stack-yaml>>"
-              --no-terminal
-              <<parameters.stack-arguments>>
-              <<parameters.heavy-dependencies>>
+        - <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+        - <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-
+  - steps: <<parameters.before-dependencies>>
   - run:
       name: Build dependencies
       command: stack build
@@ -68,6 +61,7 @@ steps:
         --no-run-benchmarks
         --test
         --no-run-tests
+  - steps: <<parameters.after-dependencies>>
   - when:
       condition: <<parameters.hlint>>
       steps:
@@ -89,7 +83,7 @@ steps:
               <<parameters.stack-arguments>>
               --copy-compiler-tool weeder
   - save_cache:
-      key: v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+      key: <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
       paths:
         - ~/.stack
         - ./.stack-work

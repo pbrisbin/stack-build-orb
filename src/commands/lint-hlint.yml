@@ -1,0 +1,25 @@
+description: |
+  Lint the project with HLint
+
+parameters:
+  stack-yaml:
+    description: "Path to stack.yaml file to use"
+    type: string
+    default: stack.yaml
+  hlint-yaml-url:
+    description: "URL to hlint.yaml to download"
+    type: string
+    default: ""
+
+steps:
+  - run:
+      name: HLint
+      command: |
+        if [ -n "<<parameters.hlint-yaml-url>>" ]; then
+          curl -L -o .hlint.yaml "<<parameters.hlint-yaml-url>>"
+        fi
+
+        stack exec \
+          --stack-yaml "<<parameters.stack-yaml>>" \
+          --no-terminal \
+          hlint .
