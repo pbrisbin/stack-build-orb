@@ -54,13 +54,13 @@ steps:
   - test:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: <<parameters.stack-arguments>>
-  - condition:
-      when: <<parameters.hlint>>
+  - when:
+      condition: <<parameters.hlint>>
       steps:
         - lint-hlint:
             stack-yaml: <<parameters.stack-yaml>>
-  - condition:
-      when: <<parameters.weeder>>
+  - when:
+      condition: <<parameters.weeder>>
       steps:
         - lint-weeder:
             stack-yaml: <<parameters.stack-yaml>>
