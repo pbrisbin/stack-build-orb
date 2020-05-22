@@ -18,17 +18,17 @@ parameters:
     description: "Run Weeder?"
     type: boolean
     default: true
-  cache-epoch:
+  cache-prefix:
     description: "Prefix used for cache key"
-    type: integer
-    default: 1
+    type: string
+    default: v1
 
 steps:
   - restore_cache:
       keys:
-        - v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
-        - v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
-        - v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-
+        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
+        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-
   - run:
       name: Build
       command: stack build
@@ -39,6 +39,6 @@ steps:
         --test
         --no-run-tests
   - save_cache:
-      key: v<<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
+      key: <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
       paths:
         - ./.stack-work

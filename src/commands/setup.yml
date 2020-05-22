@@ -26,10 +26,10 @@ parameters:
     description: "Install Weeder?"
     type: boolean
     default: true
-  cache-epoch:
+  cache-prefix:
     description: "Prefix used for cache key"
-    type: integer
-    default: 1
+    type: string
+    default: v1-dependencies
 
 steps:
   - run:
@@ -47,8 +47,8 @@ steps:
         git ls-files | xargs md5sum > source.digest
   - restore_cache:
       keys:
-        - v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
-        - v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-
+        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-
   - steps: <<parameters.before-dependencies>>
   - run:
       name: Build dependencies
@@ -83,7 +83,7 @@ steps:
               <<parameters.stack-arguments>>
               --copy-compiler-tool weeder
   - save_cache:
-      key: v<<parameters.cache-epoch>>-dependencies-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+      key: <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
       paths:
         - ~/.stack
         - ./.stack-work

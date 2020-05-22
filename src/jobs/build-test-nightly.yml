@@ -26,10 +26,10 @@ parameters:
     description: "Steps to run after tests"
     type: steps
     default: []
-  cache-epoch:
+  cache-prefix:
     description: "Prefix used for all cache keys"
-    type: integer
-    default: 1
+    type: string
+    default: v1-nightly
 
   executor:
     description: "Executor to use for this job"
@@ -47,11 +47,11 @@ steps:
       after-dependencies: <<parameters.after-dependencies>>
       hlint: false
       weeder: false
-      cache-epoch: <<parameters.cache-epoch>>
+      cache-prefix: <<parameters.cache-prefix>>-dependencies
   - build:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: --resolver nightly <<parameters.stack-arguments>>
-      cache-epoch: <<parameters.cache-epoch>>
+      cache-prefix: <<parameters.cache-prefix>>
   - test:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: --resolver nightly <<parameters.stack-arguments>>

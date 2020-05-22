@@ -38,10 +38,10 @@ parameters:
     description: "Run Weeder?"
     type: boolean
     default: true
-  cache-epoch:
+  cache-prefix:
     description: "Prefix used for all cache keys"
-    type: integer
-    default: 1
+    type: string
+    default: v1
 
   executor:
     description: "Executor to use for this job"
@@ -59,11 +59,11 @@ steps:
       after-dependencies: <<parameters.after-dependencies>>
       hlint: <<parameters.hlint>>
       weeder: <<parameters.weeder>>
-      cache-epoch: <<parameters.cache-epoch>>
+      cache-prefix: <<parameters.cache-prefix>>-dependencies
   - build:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: <<parameters.stack-arguments>>
-      cache-epoch: <<parameters.cache-epoch>>
+      cache-prefix: <<parameters.cache-prefix>>
   - test:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: <<parameters.stack-arguments>>
