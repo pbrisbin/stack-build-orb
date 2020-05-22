@@ -26,9 +26,9 @@ parameters:
 steps:
   - restore_cache:
       keys:
-        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
-        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
-        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-
+        - <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
+        - <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+        - <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-
   - run:
       name: Build
       command: stack build
@@ -39,6 +39,6 @@ steps:
         --test
         --no-run-tests
   - save_cache:
-      key: <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
+      key: <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}-{{ checksum "source.digest" }}
       paths:
         - ./.stack-work

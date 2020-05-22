@@ -47,8 +47,8 @@ steps:
         git ls-files | xargs md5sum > source.digest
   - restore_cache:
       keys:
-        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
-        - <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-
+        - <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+        - <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-
   - steps: <<parameters.before-dependencies>>
   - run:
       name: Build dependencies
@@ -83,7 +83,7 @@ steps:
               <<parameters.stack-arguments>>
               --copy-compiler-tool weeder
   - save_cache:
-      key: <<parameters.cache-epoch>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
+      key: <<parameters.cache-prefix>>-{{ checksum "<<parameters.stack-yaml>>" }}-{{ checksum "project.digest" }}
       paths:
         - ~/.stack
         - ./.stack-work
