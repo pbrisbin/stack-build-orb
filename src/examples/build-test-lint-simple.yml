@@ -7,13 +7,8 @@ usage:
   orbs:
     stack-build: pbrisbin/stack-build@x.y
 
-  jobs:
-    build:
-      executor: stack-build/ubuntu
-      steps:
-        - checkout
-        - stack-build/setup
-        - stack-build/build
-        - stack-build/test
-        - stack-build/lint-hlint
-        - stack-build/lint-weeder
+  workflows:
+    commit:
+      jobs:
+        - stack-build/build-test-lint:
+            name: build

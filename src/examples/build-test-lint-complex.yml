@@ -1,0 +1,66 @@
+description: |
+  Build, test, and lint a complicated project with multiple resolvers, system
+  dependencies, and coverage in the main job
+
+usage:
+  version: 2.1
+
+  orbs:
+    stack-build: pbrisbin/stack-build@x.y
+
+  defaults: &defaults
+    before-dependencies:
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libpcre3-dev
+    hlint-yaml-url:
+      https://raw.githubusercontent.com/{whoever}/dotfiles/master/hlint.yaml
+
+  workflows:
+    commit:
+      jobs:
+        - stack-build/build-test-lint:
+            <<: *defaults
+            name: "default"
+            stack-arguments: --coverage --flag some-package:some-flag
+            after-dependencies:
+              - run: |
+                  stack install --no-terminal --copy-compiler-tool cc-coverage
+                  curl -L -o cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+                  chmod +x ./cc-test-reporter
+            after-test:
+              - run: stack exec tix2cc | ./cc-test-reporter upload-coverage --input -
+        - stack-build/build-test-lint:
+            <<: *defaults
+            name: "ghc-8.8.2 / lts-15.1"
+            stack-yaml: stack-lts-15.1.yaml
+            stack-arguments: --flag some-package:some-flag
+        - stack-build/build-test-lint:
+            <<: *defaults
+            name: "ghc-8.6.5 / lts-14.16"
+            stack-yaml: stack-lts-14.16.yaml
+            stack-arguments: --flag some-package:some-flag
+        - stack-build/build-test-nightly:
+            name: "nightly"
+            stack-arguments: --flag some-package:some-flag
+            before-dependencies:
+              - run: |
+                  sudo apt-get update -y
+                  sudo apt-get install -y libpcre3-dev
+
+    nightly:
+      triggers:
+        - schedule:
+            cron: "0 0 * * *"
+            filters:
+              branches:
+                only:
+                  - master
+      jobs:
+        - stack-build/build-test-nightly:
+            name: "nightly"
+            stack-arguments: --flag some-package:some-flag
+            before-dependencies:
+              - run: |
+                  sudo apt-get update -y
+                  sudo apt-get install -y libpcre3-dev

@@ -21,9 +21,6 @@ usage:
         - stack-build/build-test-lint:
             name: "ghc-8.4.3 / lts-12.10"
             stack-yaml: stack-lts-12.10.yaml
-        - stack-build/build-test-lint:
+        - stack-build/build-test-nightly:
             name: "nightly"
             stack-yaml: stack-nightly.yaml
-            stack-arguments: --resolver nightly
-            hlint: false
-            weeder: false
