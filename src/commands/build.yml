@@ -10,10 +10,6 @@ parameters:
     description: "Additional arguments for ALL Stack invocations"
     type: string
     default: ""
-  heavy-dependencies:
-    description: "Dependencies to build first, with -j 1"
-    type: string
-    default: ""
   weeder:
     description: "Run Weeder?"
     type: boolean
