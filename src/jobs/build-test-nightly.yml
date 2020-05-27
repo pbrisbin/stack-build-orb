@@ -10,6 +10,14 @@ parameters:
     description: "Additional arguments for ALL Stack invocations"
     type: string
     default: ""
+  install-stack:
+    description: "Install Stack? Necessary with default executor"
+    type: boolean
+    default: true
+  upgrade-stack:
+    description: "Upgrade Stack? Only useful with custom executor"
+    type: boolean
+    default: false
   before-dependencies:
     description: "Steps to run before installing dependencies"
     type: steps
@@ -43,6 +51,8 @@ steps:
   - setup:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: --resolver nightly <<parameters.stack-arguments>>
+      install-stack: <<parameters.install-stack>>
+      install-stack: <<parameters.upgrade-stack>>
       before-dependencies: <<parameters.before-dependencies>>
       after-dependencies: <<parameters.after-dependencies>>
       hlint: false

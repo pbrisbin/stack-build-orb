@@ -10,6 +10,14 @@ parameters:
     description: "Additional Stack arguments"
     type: string
     default: ""
+  install-stack:
+    description: "Install Stack? Necessary with default executor"
+    type: boolean
+    default: true
+  upgrade-stack:
+    description: "Upgrade Stack? Only useful with custom executor"
+    type: boolean
+    default: false
   before-dependencies:
     description: "Steps to run before installing dependencies"
     type: steps
@@ -32,9 +40,18 @@ parameters:
     default: v1-dependencies
 
 steps:
-  - run:
-      name: Install Stack
-      command: curl -sSL https://get.haskellstack.org/ | sh
+  - when:
+      condition: <<parameters.install-stack>>
+      steps:
+        - run:
+            name: Install Stack
+            command: curl -sSL https://get.haskellstack.org/ | sh
+  - when:
+      condition: <<parameters.upgrade-stack>>
+      steps:
+        - run:
+            name: Upgrade Stack
+            command: stack upgrade
   - run:
       name: Digest
       command: |
