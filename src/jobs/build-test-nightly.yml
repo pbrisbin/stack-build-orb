@@ -52,7 +52,7 @@ steps:
       stack-yaml: <<parameters.stack-yaml>>
       stack-arguments: --resolver nightly <<parameters.stack-arguments>>
       install-stack: <<parameters.install-stack>>
-      install-stack: <<parameters.upgrade-stack>>
+      upgrade-stack: <<parameters.upgrade-stack>>
       before-dependencies: <<parameters.before-dependencies>>
       after-dependencies: <<parameters.after-dependencies>>
       hlint: false
