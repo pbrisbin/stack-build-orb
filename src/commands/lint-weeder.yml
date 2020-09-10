@@ -13,6 +13,6 @@ steps:
       command: stack exec
         --stack-yaml "<<parameters.stack-yaml>>"
         --no-terminal
-        weeder .
+        weeder
       environment:
         STACK_YAML: <<parameters.stack-yaml>>
