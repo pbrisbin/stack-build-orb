@@ -9,7 +9,7 @@ parameters:
   stack-arguments:
     description: "Additional arguments for ALL Stack invocations"
     type: string
-    default: ""
+    default: "--pedantic"
   weeder:
     description: "Run Weeder?"
     type: boolean
@@ -31,7 +31,6 @@ steps:
         --stack-yaml "<<parameters.stack-yaml>>"
         --no-terminal
         <<parameters.stack-arguments>>
-        --pedantic
         --test
         --no-run-tests
   - save_cache:
