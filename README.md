@@ -1,3 +1,10 @@
+**Archived**: development on this project will continue in [this fork][fork]. Existing
+versions of the Orb will not be removed, but updates will be published under the [fork's
+orb][orb].
+
+[fork]: https://github.com/stackbuilders/stack-build-orb
+[orb]: https://circleci.com/developer/orbs/orb/stackbuilders/stack-build
+
 # Stack Build Orb [![CircleCI status](https://circleci.com/gh/pbrisbin/stack-build-orb.svg "CircleCI status")](https://circleci.com/gh/pbrisbin/stack-build-orb)
 
 Built, test, and lint Stack-based Haskell projects in your CircleCI jobs.
